@@ -26,6 +26,7 @@ public class KeyHandler {
 	ArrayList<char[][]> kTables;
 	char[] totalCD;
 	char[][] total2D;
+	int[][]xorTable;
 	TextHandler texthandler=new TextHandler("MOSCHOUA");
 	
 	public KeyHandler(String key)
@@ -249,7 +250,7 @@ public class KeyHandler {
 	public void secondPermutationTable(char[] totalTable)
 	{
 		key2ndPermutation=new char[8][7];
-		System.out.println("Total length: "+totalTable.length);
+	//	System.out.println("Total length: "+totalTable.length);
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<6;h++)
@@ -258,27 +259,68 @@ public class KeyHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-				System.out.println(secondPermutationTable[i][h]+"----"+key2ndPermutation[i][h]+"-");
+	//			System.out.println(secondPermutationTable[i][h]+"----"+key2ndPermutation[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+	//		System.out.println("----------------------------");
 		}
 		kTables.add(key2ndPermutation);
 		
 	}
 	
+	/*Perform XOR between R and K*/
 	public void xorRWithK()
 	{
 		char[][] expansionR=texthandler.getExpansionR();
 		char[][] kTable=kTables.get(0);
+		ArrayList<int[]>rows=new ArrayList<int[]>();
+		
+		xorTable=new int[8][6];
 		for(int i=0;i<8;i++)
 		{
+			int[] row=new int[8];
 			for(int h=0;h<6;h++)
 			{
-				System.out.println("Key 1:   "+kTable[i][h]);
+				/*Build the xor table and also the xor rows to use them in sBoxes*/
+				xorTable[i][h]=expansionR[i][h]^kTable[i][h];
+				row[h]=xorTable[i][h];
+		//		System.out.println("XOR:   "+xorTable[i][h]);
 			}
+			System.out.println("row "+row[0]);
+			rows.add(row);
+			
+			
+			
+		//	int decimal = Integer.parseInt(hexNumber, 16);
+		//	System.out.println("------------");
 		}
+		
+		sBoxes(rows);
+	//	System.out.println(""+rows.size());
 	}
 	
+	/*Find value from Sboxes*/
+	public void sBoxes(ArrayList<int[]> rows)
+	{
+		int[] sColumns=new int [8];
+		int[] sRows=new int[8];
+		int j=0;
+		
+		for(int[] r: rows)
+		{
+			/*Get the first and last bit from the row
+			 * convert from binary string to decimal to find the row*/
+			String rSbox=Integer.toString(r[0])+Integer.toString(r[5]);
+			sRows[j]=Integer.parseInt(rSbox,2);
+			/*Get the middle 4 bits from the row
+			 * conver from binary string to decimal to find the column*/
+			String cSbox=Integer.toString(r[1])+Integer.toString(r[2])+Integer.toString(r[3])+Integer.toString(r[4]);
+			sColumns[j]=Integer.parseInt(cSbox,2);
+			
+			System.out.println(sRows[j]+" row");
+			System.out.println(sColumns[j]+" column");
+			j++;
+		}
+	}
 	
 	/*Initialize the tables that are used as indicators to perform the permutations for the key*/
 	public void permutationTableInitialization()

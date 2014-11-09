@@ -61,7 +61,7 @@ public class TextHandler {
 		{
 			binaryText+="0";
 		}
-		System.out.println("'" + text + "' to binary: " + binary);
+	//	System.out.println("'" + text + "' to binary: " + binary);
 	}
 	
 	public void textPermutation(String s)
@@ -75,12 +75,12 @@ public class TextHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-				System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
+	//			System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+	//		System.out.println("----------------------------");
 		}
 	}
-	
+	/*Split the array in left and right use help array to expand afterwards*/
 	public void leftAndRightParts(char[][] charArrayLR)
 	{
 		char[][] R, L;
@@ -96,20 +96,21 @@ public class TextHandler {
 				if(i<4)
 				{
 					L[i][h]=charArrayLR[i][h];
-					System.out.println("L: "+L[i][h]);
+	//				System.out.println("L: "+L[i][h]);
 				}
 				else
 				{
 					R[i-4][h]=charArrayLR[i][h];
 					helpR[j]=charArrayLR[i][h];
 					j++;
-					System.out.println("R: "+R[i-4][h]);
+	//				System.out.println("R: "+R[i-4][h]);
 				}
 			}
 		}
 		expandR(helpR);
 	}
 	
+	/*Expand the first R array*/
 	public void expandR(char[] ER)
 	{
 		char help[]=ER;
@@ -122,9 +123,9 @@ public class TextHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-				System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
+	//			System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+	//		System.out.println("----------------------------");
 		}
 	}
 	
