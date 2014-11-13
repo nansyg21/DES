@@ -27,6 +27,8 @@ public class KeyHandler {
 	char[] totalCD;
 	char[][] total2D;
 	int[][]xorTable;
+	ArrayList<int[]> sBoxConvertions;
+	int [] sBoxConverted;
 	TextHandler texthandler=new TextHandler("MOSCHOUA");
 	
 	public KeyHandler(String key)
@@ -37,6 +39,8 @@ public class KeyHandler {
 		dTables=new ArrayList<char[][]>();
 		kTables=new ArrayList<char[][]>();
 		total2D=new char[8][7];
+		sBoxConverted=new int[8];
+		sBoxConvertions=new ArrayList<int[]>();
 		permutationTableInitialization();
 		populateSboxes();
 		firstPermutation();
@@ -324,6 +328,7 @@ public class KeyHandler {
 	{
 		int[] sColumns=new int [8];
 		int[] sRows=new int[8];
+		int[][] currentSbox;
 		int j=0;
 		
 		for(int[] r: rows)
@@ -336,11 +341,18 @@ public class KeyHandler {
 			 * conver from binary string to decimal to find the column*/
 			String cSbox=Integer.toString(r[1])+Integer.toString(r[2])+Integer.toString(r[3])+Integer.toString(r[4]);
 			sColumns[j]=Integer.parseInt(cSbox,2);
-			
+			/*Get the current SBox and find the value of transformation using the row and the column from above*/
+			currentSbox=sboxes.get(j);
+			sBoxConverted[j]=currentSbox[sRows[j]][sColumns[j]];
 			System.out.println(sRows[j]+" row");
 			System.out.println(sColumns[j]+" column");
 			j++;
 		}
+		
+//		for(int i=0;i<8;i++)
+//		{
+//			System.out.println("Sbox value: "+sBoxConverted[i]);
+//		}
 	}
 	
 	/*Initialize the tables that are used as indicators to perform the permutations for the key*/
