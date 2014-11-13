@@ -175,16 +175,16 @@ public class KeyHandler {
 			}
 			
 			/*Reorder the help tables with left circular shift*/
-			char hc, hd;
-			hc=helpShiftC[0];
-			hd=helpShiftD[0];
-			for(int i=1;i<4;i++)
-			{
-				helpShiftC[i-1]=helpShiftC[i];
-				helpShiftD[i-1]=helpShiftD[i];
-			}
-			helpShiftC[3]=hc;
-			helpShiftD[3]=hd;
+//			char hc, hd;
+//			hc=helpShiftC[0];
+//			hd=helpShiftD[0];
+//			for(int i=1;i<4;i++)
+//			{
+//				helpShiftC[i-1]=helpShiftC[i];
+//				helpShiftD[i-1]=helpShiftD[i];
+//			}
+//			helpShiftC[3]=hc;
+//			helpShiftD[3]=hd;
 			
 			/*Simulate the left shift for the main 2 tables*/
 			for(int i=0;i<4;i++)
@@ -198,9 +198,28 @@ public class KeyHandler {
 				/*Add the last column from the help tables*/
 				cTable[i][6]=helpShiftC[i];
 				dTable[i][6]=helpShiftD[i];
+				
+			
 			
 			}
 			
+		/*	for(int i=0;i<4;i++)
+			{
+				for(int h=0;h<7;h++)
+				{
+					System.out.println("C- "+cTable[i][h]);
+				}
+				System.out.println("-----------------");
+			}
+			
+			for(int i=0;i<4;i++)
+			{
+				for(int h=0;h<7;h++)
+				{
+					System.out.println("D- "+dTable[i][h]);
+				}
+				System.out.println("-----------------");
+			}*/
 			
 			if(shiftTable[iterationNum]==1)
 			{
@@ -212,6 +231,7 @@ public class KeyHandler {
 					{
 						//1D to perform 2nd permutation
 						totalCD[j]=cTable[i][h];
+				//		System.out.println("CD - "+totalCD[j]);
 						totalCD[j+28]=dTable[i][h];
 						//2D to be used as input for the next iteration
 						total2D[i][h]=cTable[i][h];
@@ -220,7 +240,7 @@ public class KeyHandler {
 					}
 				}
 				
-/*				for(int i=0;i<56;i++)
+		/*	for(int i=0;i<56;i++)
 				{
 					for(int h=0;h<7;h++)
 					{
@@ -241,6 +261,7 @@ public class KeyHandler {
 			else if(shiftTable[iterationNum]==2)
 			{
 				shiftTable[iterationNum]=1;
+			//	System.out.println("Double.............");
 				leftShift(cTable,dTable);
 			}
 			
