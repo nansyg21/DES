@@ -19,6 +19,7 @@ public class KeyHandler {
 	char[] keyNoParity;
 	char[][] key1stPermutation;
 	char[][] key2ndPermutation;
+	char[][] sBoxPermutation;
 	char[][] C, D; //arrays to split the first permutation key
 	int iterationNum=0;
 	ArrayList<char[][]> cTables;
@@ -27,8 +28,8 @@ public class KeyHandler {
 	char[] totalCD;
 	char[][] total2D;
 	int[][]xorTable;
-	ArrayList<int[]> sBoxConvertions;
-	int [] sBoxConverted;
+	ArrayList<String[]> sBoxConvertions;
+	String [] sBoxConverted;
 	TextHandler texthandler=new TextHandler("MOSCHOUA");
 	
 	public KeyHandler(String key)
@@ -39,8 +40,8 @@ public class KeyHandler {
 		dTables=new ArrayList<char[][]>();
 		kTables=new ArrayList<char[][]>();
 		total2D=new char[8][7];
-		sBoxConverted=new int[8];
-		sBoxConvertions=new ArrayList<int[]>();
+		sBoxConverted=new String[8];
+		sBoxConvertions=new ArrayList<String[]>();
 		permutationTableInitialization();
 		populateSboxes();
 		firstPermutation();
@@ -330,6 +331,7 @@ public class KeyHandler {
 		int[] sRows=new int[8];
 		int[][] currentSbox;
 		int j=0;
+		String helpString="";
 		
 		for(int[] r: rows)
 		{
@@ -343,16 +345,36 @@ public class KeyHandler {
 			sColumns[j]=Integer.parseInt(cSbox,2);
 			/*Get the current SBox and find the value of transformation using the row and the column from above*/
 			currentSbox=sboxes.get(j);
-			sBoxConverted[j]=currentSbox[sRows[j]][sColumns[j]];
-			System.out.println(sRows[j]+" row");
-			System.out.println(sColumns[j]+" column");
+		//	sBoxConverted[j]=currentSbox[sRows[j]][sColumns[j]];
+			sBoxConverted[j]=Integer.toBinaryString(currentSbox[sRows[j]][sColumns[j]]);
+			while(sBoxConverted[j].length()<4)
+			{
+				sBoxConverted[j]="0"+sBoxConverted[j];
+			}
+		//	System.out.println(sRows[j]+" row");
+		//	System.out.println(sColumns[j]+" column");
+			helpString+=sBoxConverted[j];
 			j++;
 		}
+		char[] sBoxHelp=helpString.toCharArray();
+		sBoxPermutation=new char[8][4];
+		for(int i=0;i<8;i++)
+		{
+			for(int h=0;h<4;h++)
+			{
+				sBoxPermutation[i][h]=sBoxHelp[sboxPermutationTable[i][h]-1]; 
+				/* -1 Because the number in the step by step manual starts from 1
+				 * However the array numeration begins with 0*/
+				
+				System.out.println(sboxPermutationTable[i][h]+"----"+sBoxPermutation[i][h]+"-");
+			}
+			System.out.println("----------------------------");
+		}
 		
-//		for(int i=0;i<8;i++)
-//		{
-//			System.out.println("Sbox value: "+sBoxConverted[i]);
-//		}
+	//	for(int i=0;i<8;i++)
+	//	{
+	//		System.out.println("Sbox value: "+sBoxConverted[i]);
+	//	}
 	}
 	
 	/*Initialize the tables that are used as indicators to perform the permutations for the key*/
