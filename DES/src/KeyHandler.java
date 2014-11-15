@@ -28,9 +28,12 @@ public class KeyHandler {
 	char[] totalCD;
 	char[][] total2D;
 	int[][]xorTable;
+	char[][] newR;
 	ArrayList<String[]> sBoxConvertions;
 	String [] sBoxConverted;
+	char[]lToXor;
 	TextHandler texthandler=new TextHandler("MOSCHOUA");
+	int iterations=1;
 	
 	public KeyHandler(String key)
 	{
@@ -42,6 +45,7 @@ public class KeyHandler {
 		total2D=new char[8][7];
 		sBoxConverted=new String[8];
 		sBoxConvertions=new ArrayList<String[]>();
+		lToXor=new char[32];
 		permutationTableInitialization();
 		populateSboxes();
 		firstPermutation();
@@ -51,7 +55,7 @@ public class KeyHandler {
 		{
 			secondPermutation(total2D);
 		}
-		xorRWithK();
+		xorRWithK(0);
 	}
 	
 	
@@ -294,10 +298,10 @@ public class KeyHandler {
 	}
 	
 	/*Perform XOR between R and K*/
-	public void xorRWithK()
+	public void xorRWithK(int Iteration)
 	{
 		char[][] expansionR=texthandler.getExpansionR();
-		char[][] kTable=kTables.get(0);
+		char[][] kTable=kTables.get(Iteration);
 		ArrayList<int[]>rows=new ArrayList<int[]>();
 		
 		xorTable=new int[8][6];
@@ -366,17 +370,53 @@ public class KeyHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-				System.out.println(sboxPermutationTable[i][h]+"----"+sBoxPermutation[i][h]+"-");
+		//		System.out.println(sboxPermutationTable[i][h]+"----"+sBoxPermutation[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+		//	System.out.println("----------------------------");
 		}
-		
+		xorSboxWithL();
 	//	for(int i=0;i<8;i++)
 	//	{
 	//		System.out.println("Sbox value: "+sBoxConverted[i]);
 	//	}
 	}
+	public void xorSboxWithL()
+	{
+		char[][] helpXor=texthandler.getlTables(1);
+		char[] helpExpand=new char[32];
+		newR=new char[4][8];
+		int j=0;
+		/*Convert the 4*8 table to 1D table to XOR it with a 8*4 table*/
+		for (int i=0;i<8;i++)
+		{
+			for(int h=0;h<4;h++)
+			{
+				lToXor[j]=sBoxPermutation[i][h];
+				j++;
+			}
+		}
 	
+		j=0;
+		for(int i=0;i<4;i++)
+		{
+			for(int h=0;h<8;h++)
+			{
+				newR[i][h]=Character.forDigit((lToXor[j]^helpXor[i][h]),10);
+				helpExpand[j]=newR[i][h];
+				System.out.println(""+newR[i][h]);
+				j++;
+			}
+			System.out.println("---------------------");
+		}
+		texthandler.getrTables().add(newR);
+		while(iterations<16)
+		{
+			iterations++;
+			texthandler.expandR(helpExpand);
+			xorRWithK(iterations-1);
+		}
+
+	}
 	/*Initialize the tables that are used as indicators to perform the permutations for the key*/
 	public void permutationTableInitialization()
 	{

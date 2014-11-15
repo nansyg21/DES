@@ -26,6 +26,31 @@ public class TextHandler {
 		leftAndRightParts(textPermutationTable);
 	}
 
+	
+
+	public ArrayList<char[][]> getrTables() {
+		return rTables;
+	}
+
+
+
+	public void setrTables(ArrayList<char[][]> rTables) {
+		this.rTables = rTables;
+	}
+
+
+
+	public char[][] getlTables(int i) {
+		return lTables.get(i);
+	}
+
+
+
+	public void setlTables(ArrayList<char[][]> lTables) {
+		this.lTables = lTables;
+	}
+
+
 
 	public char[][] getExpansionR() {
 		return expansionR;
@@ -96,11 +121,13 @@ public class TextHandler {
 				if(i<4)
 				{
 					L[i][h]=charArrayLR[i][h];
-	//				System.out.println("L: "+L[i][h]);
+					lTables.add(L);
+				//	System.out.println("L: "+L[i][h]);
 				}
 				else
 				{
 					R[i-4][h]=charArrayLR[i][h];
+					rTables.add(R);
 					helpR[j]=charArrayLR[i][h];
 					j++;
 	//				System.out.println("R: "+R[i-4][h]);
@@ -113,6 +140,7 @@ public class TextHandler {
 	/*Expand the first R array*/
 	public void expandR(char[] ER)
 	{
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		char help[]=ER;
 		expansionR=new char[8][6];
 		for(int i=0;i<8;i++)
