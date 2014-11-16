@@ -32,7 +32,9 @@ public class TextHandler {
 		return rTables;
 	}
 
-
+	public ArrayList<char[][]> getlTables() {
+		return lTables;
+	}
 
 	public void setrTables(ArrayList<char[][]> rTables) {
 		this.rTables = rTables;
@@ -42,6 +44,10 @@ public class TextHandler {
 
 	public char[][] getlTables(int i) {
 		return lTables.get(i);
+	}
+	
+	public char[][] getrTables(int i) {
+		return rTables.get(i);
 	}
 
 
@@ -64,7 +70,8 @@ public class TextHandler {
 
 	public void convertToBitStream(String s)
 	{
-		text=s;
+	//	text=s;
+		text="MOSCHOUA";
 		byte[] bytes = text.getBytes();
 		StringBuilder binary = new StringBuilder();
 		for (byte b : bytes)
@@ -77,20 +84,20 @@ public class TextHandler {
 			}
 			binary.append(' ');
 		}
-		//binaryText=binary.toString();
-		//binaryText=binaryText.replaceAll("\\p{Z}","");
-		binaryText="0001011010111101010000001001010010110100010100111000101001111011";
-		
+		binaryText=binary.toString();
+		System.out.println("Binary Text: "+binaryText);
+		binaryText=binaryText.replaceAll("\\p{Z}","");
+				
 		/*If the block length is less than 64 add 0 to the end*/
 		while(binaryText.length()<64)
 		{
 			binaryText+="0";
 		}
-	//	System.out.println("'" + text + "' to binary: " + binary);
 	}
 	
 	public void textPermutation(String s)
 	{
+		System.out.println("Text Permutation");
 		char[] help=s.toCharArray();
 		for(int i=0;i<8;i++)
 		{
@@ -100,9 +107,9 @@ public class TextHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-	//			System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
+				System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
 			}
-	//		System.out.println("----------------------------");
+			System.out.println("----------------------------");
 		}
 	}
 	/*Split the array in left and right use help array to expand afterwards*/
@@ -114,6 +121,7 @@ public class TextHandler {
 		char[] helpR=new char[32];
 		int j=0;
 		
+		System.out.println("Split in left and right parts: ");
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<8;h++)
@@ -121,26 +129,28 @@ public class TextHandler {
 				if(i<4)
 				{
 					L[i][h]=charArrayLR[i][h];
-					lTables.add(L);
+					
 				//	System.out.println("L: "+L[i][h]);
 				}
 				else
 				{
 					R[i-4][h]=charArrayLR[i][h];
-					rTables.add(R);
+					
 					helpR[j]=charArrayLR[i][h];
 					j++;
 	//				System.out.println("R: "+R[i-4][h]);
 				}
 			}
 		}
+		lTables.add(L);
+		rTables.add(R);
 		expandR(helpR);
 	}
 	
 	/*Expand the first R array*/
 	public void expandR(char[] ER)
 	{
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("Expand R: ");
 		char help[]=ER;
 		expansionR=new char[8][6];
 		for(int i=0;i<8;i++)
@@ -151,10 +161,11 @@ public class TextHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-	//			System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
+				System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
 			}
-	//		System.out.println("----------------------------");
+			System.out.println("----------------------------");
 		}
+	//	return expansionR;
 	}
 	
 	public void permutationTableInitialization()
