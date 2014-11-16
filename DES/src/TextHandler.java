@@ -11,12 +11,14 @@ public class TextHandler {
 	ArrayList<char[][]> rTables;
 	ArrayList<char[][]> lTables;
 	private char[][] expansionR;
+	private KeyHandler kg;
 
 	
 	
-	public TextHandler(String text)
+	public TextHandler(String text, KeyHandler kg)
 	{
 		this.text=text;
+		this.kg=kg;
 		textPermutationTable=new char[8][8];
 		rTables=new ArrayList<char[][]>();
 		lTables=new ArrayList<char[][]>();
@@ -85,7 +87,8 @@ public class TextHandler {
 			binary.append(' ');
 		}
 		binaryText=binary.toString();
-		System.out.println("Binary Text: "+binaryText);
+		kg.setTextToDisplay(kg.getTextToDisplay()+"Text Input In Binary: "+binaryText+"\n");
+	//	System.out.println("Binary Text: "+binaryText);
 		binaryText=binaryText.replaceAll("\\p{Z}","");
 				
 		/*If the block length is less than 64 add 0 to the end*/
@@ -97,7 +100,8 @@ public class TextHandler {
 	
 	public void textPermutation(String s)
 	{
-		System.out.println("Text Permutation");
+		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Text Permutation:\n");
+		//System.out.println("Text Permutation");
 		char[] help=s.toCharArray();
 		for(int i=0;i<8;i++)
 		{
@@ -106,10 +110,11 @@ public class TextHandler {
 				textPermutationTable[i][h]=help[textPermutationInit[i][h]-1]; 
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
-				
-				System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
+				kg.setTextToDisplay(kg.getTextToDisplay()+textPermutationTable[i][h]+" ");
+				//System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
+			//System.out.println("----------------------------");
 		}
 	}
 	/*Split the array in left and right use help array to expand afterwards*/
@@ -120,27 +125,31 @@ public class TextHandler {
 		L=new char[4][8];
 		char[] helpR=new char[32];
 		int j=0;
-		
-		System.out.println("Split in left and right parts: ");
+		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Split In Left (L) And Right (R) Parts: "+"\n");
+		kg.setTextToDisplay(kg.getTextToDisplay()+"L Table: "+"\n");
+		//System.out.println("Split in left and right parts: ");
 		for(int i=0;i<8;i++)
 		{
+			if(i==4)
+				kg.setTextToDisplay(kg.getTextToDisplay()+"R Table: "+"\n");
 			for(int h=0;h<8;h++)
 			{
 				if(i<4)
 				{
 					L[i][h]=charArrayLR[i][h];
-					
+					kg.setTextToDisplay(kg.getTextToDisplay()+L[i][h]+" ");
 				//	System.out.println("L: "+L[i][h]);
 				}
 				else
 				{
 					R[i-4][h]=charArrayLR[i][h];
-					
+					kg.setTextToDisplay(kg.getTextToDisplay()+R[i-4][h]+" ");
 					helpR[j]=charArrayLR[i][h];
 					j++;
 	//				System.out.println("R: "+R[i-4][h]);
 				}
 			}
+			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
 		}
 		lTables.add(L);
 		rTables.add(R);
@@ -150,9 +159,10 @@ public class TextHandler {
 	/*Expand the first R array*/
 	public void expandR(char[] ER)
 	{
-		System.out.println("Expand R: ");
+		//System.out.println("Expand R: ");
 		char help[]=ER;
 		expansionR=new char[8][6];
+		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Perform R Expansion: "+"\n");
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<6;h++)
@@ -160,10 +170,11 @@ public class TextHandler {
 				expansionR[i][h]=help[expansion[i][h]-1]; 
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
-				
-				System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
+				kg.setTextToDisplay(kg.getTextToDisplay()+expansionR[i][h]+" ");
+		//		System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
 			}
-			System.out.println("----------------------------");
+			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
+		//	System.out.println("----------------------------");
 		}
 	//	return expansionR;
 	}
