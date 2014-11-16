@@ -10,6 +10,7 @@ public class KeyHandler {
 	int[][] firstPermutationTable;
 	int[][] secondPermutationTable;
 	int[][] sboxPermutationTable;
+	int[][] finalPermutationTable;
 	ArrayList<int[][]>sboxes;
 	int[][] sB1,sB2,sB3,sB4,sB5,sB6,sB7,sB8;
 	int[] shiftTable;
@@ -34,6 +35,8 @@ public class KeyHandler {
 	char[]lToXor;
 	TextHandler texthandler=new TextHandler("MOSCHOUA");
 	int iterations=1;
+	char[][] encryptedTable;
+	int loop=0;
 	
 	public KeyHandler(String key)
 	{
@@ -56,6 +59,8 @@ public class KeyHandler {
 			secondPermutation(total2D);
 		}
 		xorRWithK(0);
+		
+		finalPermutation(texthandler.getrTables(15),texthandler.getlTables(15));
 	}
 	
 	
@@ -92,6 +97,7 @@ public class KeyHandler {
 	/*Performs the first permutation*/
 	public void firstPermutation()
 	{
+		
 		key=key.replaceAll("\\p{Z}",""); //Remove all white spaces
 		keyChars=key.toCharArray();
 		int j=0; //separate position indicator for keyNoParity array
@@ -107,8 +113,9 @@ public class KeyHandler {
 			}
 						
 			keyBinary+=keyBits; //display the whole key in binary
-		//	System.out.println(""+keyBinary);
+			
 		}
+//		System.out.println("Key in binary: "+keyBinary);
 		
 		/*Remove the parity bits
 		 * Populate a new table with the key by excluding every 8th bit from the key
@@ -119,11 +126,18 @@ public class KeyHandler {
 			if((i+1)%8!=0)
 			{
 				keyNoParity[j]=help[i];
+//				System.out.println("Key No Parity: "+keyNoParity[j]);
 				j++;
+			}
+			else
+			{
+		//		System.out.println("-------------------");
 			}
 		}
 		
+			
 		/*Practice first permutation*/
+//		System.out.println("First Permutation");
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<7;h++)
@@ -132,9 +146,9 @@ public class KeyHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-				//System.out.println(FirstPermutationTable[i][h]+"----"+key1stPermutation[i][h]+"-");
+//				System.out.println(firstPermutationTable[i][h]+"----"+key1stPermutation[i][h]+"-");
 			}
-			//System.out.println("----------------------------");
+//			System.out.println("----------------------------");
 		}
 		
 	}
@@ -142,10 +156,12 @@ public class KeyHandler {
 	/*Performs the second permutation*/
 	public void secondPermutation(char[][] charArray1st)
 	{
-		C=new char[4][7];
-		D=new char[4][7];
+		char[][] C=new char[4][7];
+		char[][] D=new char[4][7];
 		totalCD=new char[56];
 		
+//		System.out.println("Iteration Num: "+iterationNum);
+//		System.out.println("Split in C and D");
 		/*Split the table for the first 28 bits populate C and for the rest 28 bits populate D*/
 		for(int i=0;i<8;i++)
 		{
@@ -154,15 +170,16 @@ public class KeyHandler {
 				if(i<4)
 				{
 					C[i][h]=charArray1st[i][h];
-				//	System.out.println("C: "+C[i][h]);
+//					System.out.println("C: "+C[i][h]);
 				}
 				else
 				{
 					D[i-4][h]=charArray1st[i][h];
-				//	System.out.println("D: "+D[i-4][h]);
+//					System.out.println("D: "+D[i-4][h]);
 				}
 			}
 		}
+//		System.out.println("--------------------");
 		leftShift(C,D);
 		
 		
@@ -184,17 +201,17 @@ public class KeyHandler {
 			}
 			
 			/*Reorder the help tables with left circular shift*/
-//			char hc, hd;
-//			hc=helpShiftC[0];
-//			hd=helpShiftD[0];
-//			for(int i=1;i<4;i++)
-//			{
-//				helpShiftC[i-1]=helpShiftC[i];
-//				helpShiftD[i-1]=helpShiftD[i];
-//			}
-//			helpShiftC[3]=hc;
-//			helpShiftD[3]=hd;
-			
+		/*	char hc, hd;
+			hc=helpShiftC[0];
+			hd=helpShiftD[0];
+			for(int i=1;i<4;i++)
+			{
+				helpShiftC[i-1]=helpShiftC[i];
+				helpShiftD[i-1]=helpShiftD[i];
+			}
+			helpShiftC[3]=hc;
+			helpShiftD[3]=hd;
+			*/
 			/*Simulate the left shift for the main 2 tables*/
 			for(int i=0;i<4;i++)
 			{
@@ -212,7 +229,9 @@ public class KeyHandler {
 			
 			}
 			
-		/*	for(int i=0;i<4;i++)
+	/*		System.out.println("Left Shift C Table: ");
+			
+			for(int i=0;i<4;i++)
 			{
 				for(int h=0;h<7;h++)
 				{
@@ -220,6 +239,8 @@ public class KeyHandler {
 				}
 				System.out.println("-----------------");
 			}
+			
+			System.out.println("Left Shift D Table: ");
 			
 			for(int i=0;i<4;i++)
 			{
@@ -240,23 +261,23 @@ public class KeyHandler {
 					{
 						//1D to perform 2nd permutation
 						totalCD[j]=cTable[i][h];
-				//		System.out.println("CD - "+totalCD[j]);
 						totalCD[j+28]=dTable[i][h];
+				//		System.out.println("CD - "+totalCD[j]);
 						//2D to be used as input for the next iteration
 						total2D[i][h]=cTable[i][h];
 						total2D[i+4][h]=dTable[i][h];
 						j++;
 					}
 				}
-				
-		/*	for(int i=0;i<56;i++)
-				{
-					for(int h=0;h<7;h++)
-					{
-						System.out.println("CD - "+totalCD[i]);
-					}
-					System.out.println("---------------------------");
-				} */
+		//	System.out.println("Total table:");	
+		//	for(int i=0;i<56;i++)
+		//		{
+				//	for(int h=0;h<7;h++)
+				//	{
+		//				System.out.println("CD - "+totalCD[i]);
+				//	}
+				//	System.out.println("---------------------------");
+		//		} 
 				
 				/*Perform permutation to the combined table*/
 				secondPermutationTable(totalCD);
@@ -280,7 +301,7 @@ public class KeyHandler {
 	public void secondPermutationTable(char[] totalTable)
 	{
 		key2ndPermutation=new char[8][7];
-	//	System.out.println("Total length: "+totalTable.length);
+//		System.out.println("Second Permutation for Iteration Num: "+iterationNum);
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<6;h++)
@@ -289,9 +310,9 @@ public class KeyHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-	//			System.out.println(secondPermutationTable[i][h]+"----"+key2ndPermutation[i][h]+"-");
+//				System.out.println(secondPermutationTable[i][h]+"----"+key2ndPermutation[i][h]+"-");
 			}
-	//		System.out.println("----------------------------");
+//			System.out.println("----------------------------");
 		}
 		kTables.add(key2ndPermutation);
 		
@@ -303,7 +324,7 @@ public class KeyHandler {
 		char[][] expansionR=texthandler.getExpansionR();
 		char[][] kTable=kTables.get(Iteration);
 		ArrayList<int[]>rows=new ArrayList<int[]>();
-		
+		System.out.println("Perform XOR E(R) With K");
 		xorTable=new int[8][6];
 		for(int i=0;i<8;i++)
 		{
@@ -313,9 +334,9 @@ public class KeyHandler {
 				/*Build the xor table and also the xor rows to use them in sBoxes*/
 				xorTable[i][h]=expansionR[i][h]^kTable[i][h];
 				row[h]=xorTable[i][h];
-		//		System.out.println("XOR:   "+xorTable[i][h]);
+	//			System.out.println("XOR:   "+xorTable[i][h]);
 			}
-			System.out.println("row "+row[0]);
+	//		System.out.println("--------------------");
 			rows.add(row);
 			
 			
@@ -349,19 +370,22 @@ public class KeyHandler {
 			sColumns[j]=Integer.parseInt(cSbox,2);
 			/*Get the current SBox and find the value of transformation using the row and the column from above*/
 			currentSbox=sboxes.get(j);
-		//	sBoxConverted[j]=currentSbox[sRows[j]][sColumns[j]];
+	
 			sBoxConverted[j]=Integer.toBinaryString(currentSbox[sRows[j]][sColumns[j]]);
 			while(sBoxConverted[j].length()<4)
 			{
 				sBoxConverted[j]="0"+sBoxConverted[j];
 			}
+		//	System.out.println("Rows and Colums of SBox "+j+": ");
 		//	System.out.println(sRows[j]+" row");
 		//	System.out.println(sColumns[j]+" column");
+		//	System.out.println("SBox value: "+sBoxConverted[j]);
 			helpString+=sBoxConverted[j];
 			j++;
 		}
 		char[] sBoxHelp=helpString.toCharArray();
 		sBoxPermutation=new char[8][4];
+	//	System.out.println("SBox permutation: ");
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<4;h++)
@@ -370,19 +394,33 @@ public class KeyHandler {
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
 				
-		//		System.out.println(sboxPermutationTable[i][h]+"----"+sBoxPermutation[i][h]+"-");
+	//			System.out.println(sboxPermutationTable[i][h]+"----"+sBoxPermutation[i][h]+"-");
 			}
-		//	System.out.println("----------------------------");
+	//		System.out.println("----------------------------");
 		}
-		xorSboxWithL();
+		xorSboxWithL(loop);
 	//	for(int i=0;i<8;i++)
 	//	{
 	//		System.out.println("Sbox value: "+sBoxConverted[i]);
 	//	}
 	}
-	public void xorSboxWithL()
+	public void xorSboxWithL(int l)
 	{
-		char[][] helpXor=texthandler.getlTables(1);
+		char[][] helpXor=texthandler.getlTables(loop);
+		//texthandler.getlTables().add(texthandler.getrTables(loop-1));
+		System.out.println("Length :"+texthandler.getlTables().size() );
+		loop++;
+	
+		System.out.println("check new L");
+		for(int i=0;i<4;i++)
+		{
+			for(int h=0;h<8;h++)
+			{
+				System.out.println("L Table: "+helpXor[i][h]);
+			}
+			System.out.println("-----------------------");
+		}
+		
 		char[] helpExpand=new char[32];
 		newR=new char[4][8];
 		int j=0;
@@ -397,6 +435,7 @@ public class KeyHandler {
 		}
 	
 		j=0;
+		System.out.println("Perform XOR L with SBox permuted table: ");
 		for(int i=0;i<4;i++)
 		{
 			for(int h=0;h<8;h++)
@@ -409,13 +448,85 @@ public class KeyHandler {
 			System.out.println("---------------------");
 		}
 		texthandler.getrTables().add(newR);
+		
+		texthandler.getlTables().add(texthandler.getrTables(loop-1));
+		/*Perform the same procedure for the rest 15 keys*/
 		while(iterations<16)
 		{
 			iterations++;
+			//loop++;
 			texthandler.expandR(helpExpand);
 			xorRWithK(iterations-1);
 		}
-
+		
+		
+	}
+	
+	public void finalPermutation(char[][] RTable, char[][] LTable)
+	{
+		char[] finalTable=new char[64];
+		int j=0;
+		encryptedTable=new char[8][8];
+		
+		for(int i=0;i<8;i++)
+		{
+			for(int h=0;h<8;h++)
+			{
+				if(i<4)
+				{
+					finalTable[j]=RTable[i][h];
+				}
+				else
+				{
+					finalTable[j]=LTable[i-4][h];
+				}
+				j++;
+			}
+		}
+		
+		for(int i=0;i<8;i++)
+		{
+			for(int h=0;h<8;h++)
+			{
+				encryptedTable[i][h]=finalTable[finalPermutationTable[i][h]-1]; 
+				/* -1 Because the number in the step by step manual starts from 1
+				 * However the array numeration begins with 0*/
+				
+	//			System.out.println(finalPermutationTable[i][h]+"----"+encryptedTable[i][h]+"-");
+			}
+	//		System.out.println("----------------------------");
+		}
+		//String[] characters=new String[8];
+		String helpString="";
+		char nextChar;
+		for(int i=0;i<8;i++)
+		{
+			helpString="";
+			for(int h=0;h<8;h++)
+			{
+				helpString=helpString+encryptedTable[i][h];
+			}
+	//		System.out.println("Help String Length: "+helpString.length());
+	//		System.out.println("Help String: "+helpString);
+		//	characters[h]=helpString;
+		//	if(helpString.trim().length()!=0)
+		//	{
+				System.out.println("HELP STRING: "+helpString);
+				nextChar = (char)Integer.parseInt(helpString, 2);
+				System.out.println("HELP: "+nextChar);
+		//	}
+		}
+		
+		
+		/*---------------------------------------------------------------------*/
+		   
+	/*	
+		for(int i = 0; i < characters[i].length()-8; i += 9) //this is a little tricky.  we want [0, 7], [9, 16], etc
+		{
+		     nextChar = (char)Integer.parseInt(s.substring(i, i+7), 2);
+		     s2 += nextChar;
+		}*/
+		
 	}
 	/*Initialize the tables that are used as indicators to perform the permutations for the key*/
 	public void permutationTableInitialization()
@@ -454,6 +565,18 @@ public class KeyHandler {
 				{19,13,30,6},
 				{22,11,4,25}
 				};
+		
+		finalPermutationTable=new int[][]{
+			{40, 8, 48, 16, 56, 24, 64, 32},
+			{39, 7, 47, 15, 55, 23, 63, 31},
+			{38, 6, 46, 14, 54, 22, 62, 30},
+			{37, 5, 45, 13, 53, 21, 61, 29},
+			{36, 4, 44, 12, 52, 20, 60, 28},
+			{35, 3, 43, 11, 51, 19, 59, 27},
+			{34, 2, 42, 10, 50, 18, 58, 26},
+			{33, 1, 41, 9, 49, 17, 57, 25}
+		};
+		
 	}
 	
 	/*Create the tables used for s-box transformations*/

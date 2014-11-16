@@ -76,7 +76,7 @@ public class InputFrame extends JFrame {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		new KeyHandler("E1A4BB9BC2E324BB");
+		new KeyHandler("F49F989455498554");
 		//new TextHandler("MOSCHOUA");
 		
 	}
