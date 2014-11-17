@@ -3,15 +3,16 @@ import java.util.*;
 
 public class TextHandler {
 
-	private String text;
-	private String binaryText;
-	private int[][] textPermutationInit;
-	private int[][] expansion;
-	private char[][] textPermutationTable;
-	ArrayList<char[][]> rTables;
-	ArrayList<char[][]> lTables;
+	private String text; //text to procedure
+	private String binaryText; //text in binary
+	private int[][] textPermutationInit; //text permutation table positions
+	private int[][] expansion; 
+	private char[][] textPermutationTable; //text table after permutation
+	ArrayList<char[][]> rTables; //get all the R parts
+	ArrayList<char[][]> lTables; //get all the L parts
 	private char[][] expansionR;
 	private KeyHandler kg;
+	String helpS="";
 
 	
 	
@@ -69,11 +70,12 @@ public class TextHandler {
 		this.expansionR = expansionR;
 	}
 
-
+/*Convert the given text to bitstream
+ * Note that if the input text is bigger than 64 bits only the first 64 bits will be encrypted and displayed as result
+ * */
 	public void convertToBitStream(String s)
 	{
-	//	text=s;
-		text="MOSCHOUA";
+	
 		byte[] bytes = text.getBytes();
 		StringBuilder binary = new StringBuilder();
 		for (byte b : bytes)
@@ -87,21 +89,27 @@ public class TextHandler {
 			binary.append(' ');
 		}
 		binaryText=binary.toString();
-		kg.setTextToDisplay(kg.getTextToDisplay()+"Text Input In Binary: "+binaryText+"\n");
-	//	System.out.println("Binary Text: "+binaryText);
-		binaryText=binaryText.replaceAll("\\p{Z}","");
+	
+		helpS+="Text Input In Binary: "+binaryText+"\n";
+		kg.getMessages().add(helpS);
+		helpS="";
+	
+		binaryText=binaryText.replaceAll("\\p{Z}",""); //Remove all white spaces
 				
 		/*If the block length is less than 64 add 0 to the end*/
 		while(binaryText.length()<64)
 		{
 			binaryText+="0";
 		}
+		
 	}
 	
+	/*Text Permutation*/
 	public void textPermutation(String s)
 	{
-		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Text Permutation:\n");
-		//System.out.println("Text Permutation");
+	
+		helpS+="\n"+"Text Permutation:\n";
+	
 		char[] help=s.toCharArray();
 		for(int i=0;i<8;i++)
 		{
@@ -110,13 +118,14 @@ public class TextHandler {
 				textPermutationTable[i][h]=help[textPermutationInit[i][h]-1]; 
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
-				kg.setTextToDisplay(kg.getTextToDisplay()+textPermutationTable[i][h]+" ");
-				//System.out.println(textPermutationInit[i][h]+"----"+textPermutationTable[i][h]+"-");
+				helpS+=textPermutationTable[i][h]+" ";
 			}
-			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
-			//System.out.println("----------------------------");
+			helpS+="\n";
 		}
+		kg.getMessages().add(helpS);
+		helpS="";
 	}
+	
 	/*Split the array in left and right use help array to expand afterwards*/
 	public void leftAndRightParts(char[][] charArrayLR)
 	{
@@ -125,44 +134,47 @@ public class TextHandler {
 		L=new char[4][8];
 		char[] helpR=new char[32];
 		int j=0;
-		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Split In Left (L) And Right (R) Parts: "+"\n");
-		kg.setTextToDisplay(kg.getTextToDisplay()+"L Table: "+"\n");
-		//System.out.println("Split in left and right parts: ");
+	
+		helpS+="\n"+"Split In Left (L) And Right (R) Parts: "+"\n";
+		helpS+="L Table: "+"\n";
+	
 		for(int i=0;i<8;i++)
 		{
-			if(i==4)
-				kg.setTextToDisplay(kg.getTextToDisplay()+"R Table: "+"\n");
+			if(i==4) //print the title of the next table
+			{
+				helpS+="R Table: "+"\n";
+			}
 			for(int h=0;h<8;h++)
 			{
-				if(i<4)
+				if(i<4) //print L table elements
 				{
 					L[i][h]=charArrayLR[i][h];
-					kg.setTextToDisplay(kg.getTextToDisplay()+L[i][h]+" ");
-				//	System.out.println("L: "+L[i][h]);
+					helpS+=L[i][h]+" ";
 				}
-				else
+				else //print R table elements
 				{
 					R[i-4][h]=charArrayLR[i][h];
-					kg.setTextToDisplay(kg.getTextToDisplay()+R[i-4][h]+" ");
+					helpS+=R[i-4][h]+" ";
 					helpR[j]=charArrayLR[i][h];
 					j++;
-	//				System.out.println("R: "+R[i-4][h]);
 				}
 			}
-			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
+			
+			helpS+="\n";
 		}
+		kg.getMessages().add(helpS);
+		helpS="";
 		lTables.add(L);
 		rTables.add(R);
 		expandR(helpR);
 	}
 	
-	/*Expand the first R array*/
+	/*Expand the R array*/
 	public void expandR(char[] ER)
 	{
-		//System.out.println("Expand R: ");
 		char help[]=ER;
 		expansionR=new char[8][6];
-		kg.setTextToDisplay(kg.getTextToDisplay()+"\n"+"Perform R Expansion: "+"\n");
+		helpS+="\n"+"Perform R Expansion: "+"\n";
 		for(int i=0;i<8;i++)
 		{
 			for(int h=0;h<6;h++)
@@ -170,13 +182,12 @@ public class TextHandler {
 				expansionR[i][h]=help[expansion[i][h]-1]; 
 				/* -1 Because the number in the step by step manual starts from 1
 				 * However the array numeration begins with 0*/
-				kg.setTextToDisplay(kg.getTextToDisplay()+expansionR[i][h]+" ");
-		//		System.out.println(expansion[i][h]+"----"+expansionR[i][h]+"-");
+				helpS+=expansionR[i][h]+" ";
 			}
-			kg.setTextToDisplay(kg.getTextToDisplay()+"\n");
-		//	System.out.println("----------------------------");
+			helpS+="\n";
 		}
-	//	return expansionR;
+		kg.getMessages().add(helpS);
+		helpS="";
 	}
 	
 	public void permutationTableInitialization()

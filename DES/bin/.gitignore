@@ -2,3 +2,6 @@
 /KeyHandler.class
 /Main.class
 /TextHandler.class
+/InputFrame$EncryptionBtListener.class
+/InputFrame$StepByStepBtListener.class
+/InputFrame$ClearBtListener.class
