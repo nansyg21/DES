@@ -248,6 +248,7 @@ public class KeyHandler {
 			helpShiftD[i]=dTable[i][0];
 		}
 
+				
 		/*Reorder the help tables with left circular shift
 		 * exists in cryptool visualization*/
 		/*	char hc, hd;
@@ -563,6 +564,8 @@ public class KeyHandler {
 			}
 
 			nextChar = (char)Integer.parseInt(helpString, 2);
+					
+			
 			helpS+=nextChar;
 		}
 		messages.add(helpS);
